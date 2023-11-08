@@ -1,5 +1,6 @@
 "use strict";
 var _a;
+var exports;
 exports.__esModule = true;
 exports.list = exports.struct = exports.value = void 0;
 /**
