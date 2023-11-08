@@ -32,7 +32,7 @@ $(function()
 		else
 		{
 			// var coloredOutput = hljs.highlight("go", output.result);
-			$('#output').html(JSON.stringify(output.result));
+			$('#output').html(JSON.stringify(output.result, null, 2));
 		}
 	}
 
