@@ -43,24 +43,4 @@ const parseData  = (data) => {
 	}
 }
 
-if (typeof module != 'undefined') {
-	if (!module.parent) {
-		if (process.argv.length > 2 && process.argv[2] === '-big') {
-			bufs = []
-			process.stdin.on('data', function(buf) {
-				bufs.push(buf)
-			})
-			process.stdin.on('end', function() {
-				const json = Buffer.concat(bufs).toString('utf8')
-				console.log(parseData(json))
-			})
-		} else {
-			process.stdin.on('data', function(buf) {
-				const json = buf.toString('utf8')
-				console.log(parseData(json))
-			})
-		}
-	} else {
-		module.exports = parseData
-	}
-}
+module.exports = parseData
