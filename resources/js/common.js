@@ -1,5 +1,3 @@
-const {parseData} = require ('./parse-data.js');
-
 $(function()
 {
 	const emptyInputMsg = "Paste json or struct here";
@@ -10,6 +8,7 @@ $(function()
 	function doConversion()
 	{
 		var input = $('#input').text().trim();
+
 		if (!input || input == emptyInputMsg)
 		{
 			$('#output').html(formattedEmptyOutputMsg);
@@ -32,7 +31,8 @@ $(function()
 		}
 		else
 		{
-			$('#output').html(output);
+			// var coloredOutput = hljs.highlight("go", output.result);
+			$('#output').html(JSON.stringify(output.result));
 		}
 	}
 
