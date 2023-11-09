@@ -1,4 +1,4 @@
-const parseData  = (input) => {
+const parseData  = (input, nestedFragments = false) => {
 
 	const jsonToStruct = (json) => {
 		let data;
@@ -40,22 +40,24 @@ const parseData  = (input) => {
 		const structIndicator = /(stringValue|numberValue|nullValue)/;
 		return JSON.stringify(value).match(structIndicator) !== null
 	}
-	const jsonObject = JSON.parse(input);
-	let result = {};
-	Object.keys(jsonObject).forEach((key)=> {
-		if (typeof jsonObject[key] === 'object' && key !== 'fields'){
-			if(isStruct(jsonObject[key])){
-				result[key] = structToJson(jsonObject[key]);
+	const oneLevelParse = jsonObject => {
+		let result = {};
+		Object.keys(jsonObject).forEach((key)=> {
+			if (typeof jsonObject[key] === 'object' && key !== 'fields'){
+				if(isStruct(jsonObject[key])){
+					result[key] = structToJson(jsonObject[key]);
+				} else {
+					result[key] = jsonToStruct(jsonObject[key]);
+				}
+			} else if((typeof jsonObject[key] === 'object' && key === 'fields')){
+				result =  structToJson(jsonObject)
 			} else {
-				result[key] = jsonToStruct(jsonObject[key]);
+				result[key] = jsonObject[key];
 			}
-		}else if((typeof jsonObject[key] === 'object' && key === 'fields')){
-			return structToJson(jsonObject)
-		} else {
-			result[key] = jsonObject[key];
-		}
-	})
+		})
+		return result;
+	}
+	const jsonObject = JSON.parse(input);
+	let result = oneLevelParse(jsonObject);
 	return {result};
-
-
 }

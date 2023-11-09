@@ -33,7 +33,7 @@ function wrap(kind, value) {
 }
 function getKind(value) {
     var validKinds = Object.values(Kind);
-    if ( validKinds.includes(Object.values(value)[0])) {
+    if ( validKinds.includes(Object.keys(value)[0])) {
         return Object.keys(value)[0];
     }
     // for (var _i = 0, validKinds_1 = validKinds; _i < validKinds_1.length; _i++) {
@@ -71,21 +71,20 @@ exports.value = {
      * @returns {*}
      */
     decode: function (value) {
-        // var kind = getKind(value);
-        // if (!kind) {
-        //     throw new TypeError("Unable to determine kind for \"" + value + "\".");
-        // }
-        // switch (kind) {
-        //     case 'listValue':
-        //         return exports.list.decode(value.listValue);
-        //     case 'structValue':
-        //         return exports.struct.decode(value.structValue);
-        //     case 'nullValue':
-        //         return null;
-        //     default:
-        //         return value[kind];
-        // }
-        return Object.values(value)[0];
+        var kind = getKind(value);
+        if (!kind) {
+            throw new TypeError("Unable to determine kind for \"" + value + "\".");
+        }
+        switch (kind) {
+            case 'listValue':
+                return exports.list.decode(value.listValue);
+            case 'structValue':
+                return exports.struct.decode(value.structValue);
+            case 'nullValue':
+                return null;
+            default:
+                return value[kind];
+        }
     }
 };
 /**
@@ -123,7 +122,6 @@ exports.struct = {
         fields.forEach((pair)=>{
             json[pair.key] =  exports.value.decode(pair.value);
         })
-
         // Object.keys(fields).forEach(function (key) {
         //     json[key] = exports.value.decode(fields[key]);
         // });
