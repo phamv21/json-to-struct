@@ -28,20 +28,20 @@ function typeOf(value) {
     return toString.call(value);
 }
 function wrap(kind, value) {
-    var _a;
-    return _a = { kind: kind }, _a[kind] = value, _a;
+    var _a = {};
+    return _a[kind] = value, _a;
 }
 function getKind(value) {
-    if (value.kind) {
-        return value.kind;
-    }
     var validKinds = Object.values(Kind);
-    for (var _i = 0, validKinds_1 = validKinds; _i < validKinds_1.length; _i++) {
-        var kind = validKinds_1[_i];
-        if (value.hasOwnProperty(kind)) {
-            return kind;
-        }
+    if ( validKinds.includes(Object.values(value)[0])) {
+        return Object.keys(value)[0];
     }
+    // for (var _i = 0, validKinds_1 = validKinds; _i < validKinds_1.length; _i++) {
+    //     var kind = validKinds_1[_i];
+    //     if (value.hasOwnProperty(kind)) {
+    //         return kind;
+    //     }
+    // }
     return null;
 }
 /**
@@ -71,20 +71,21 @@ exports.value = {
      * @returns {*}
      */
     decode: function (value) {
-        var kind = getKind(value);
-        if (!kind) {
-            throw new TypeError("Unable to determine kind for \"" + value + "\".");
-        }
-        switch (kind) {
-            case 'listValue':
-                return exports.list.decode(value.listValue);
-            case 'structValue':
-                return exports.struct.decode(value.structValue);
-            case 'nullValue':
-                return null;
-            default:
-                return value[kind];
-        }
+        // var kind = getKind(value);
+        // if (!kind) {
+        //     throw new TypeError("Unable to determine kind for \"" + value + "\".");
+        // }
+        // switch (kind) {
+        //     case 'listValue':
+        //         return exports.list.decode(value.listValue);
+        //     case 'structValue':
+        //         return exports.struct.decode(value.structValue);
+        //     case 'nullValue':
+        //         return null;
+        //     default:
+        //         return value[kind];
+        // }
+        return Object.values(value)[0];
     }
 };
 /**
@@ -98,12 +99,15 @@ exports.struct = {
      * @returns {Struct}
      */
     encode: function (json) {
-        var fields = {};
+        var fields = [];
         Object.keys(json).forEach(function (key) {
+            let element = {};
             // If value is undefined, do not encode it.
             if (typeof json[key] === 'undefined')
                 return;
-            fields[key] = exports.value.encode(json[key]);
+            element['key'] = key;
+            element['value'] = exports.value.encode(json[key]);
+            fields.push(element);
         });
         return { fields: fields };
     },
@@ -114,11 +118,15 @@ exports.struct = {
      * @returns {Object.<string, *>}
      */
     decode: function (_a) {
-        var _b = _a.fields, fields = _b === void 0 ? {} : _b;
+        var _b = _a.fields, fields = _b === void 0 ? [] : _b;
         var json = {};
-        Object.keys(fields).forEach(function (key) {
-            json[key] = exports.value.decode(fields[key]);
-        });
+        fields.forEach((pair)=>{
+            json[pair.key] =  exports.value.decode(pair.value);
+        })
+
+        // Object.keys(fields).forEach(function (key) {
+        //     json[key] = exports.value.decode(fields[key]);
+        // });
         return json;
     }
 };
