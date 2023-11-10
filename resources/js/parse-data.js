@@ -37,7 +37,7 @@ const parseData  = (input, nestedFragments = false) => {
 		}
 	}
 	const isStruct = (value) =>{
-		const structIndicator = /(stringValue|numberValue|nullValue)/;
+		const structIndicator = /(stringValue|numberValue|nullValue|boolValue|structValue|listValue)/;
 		return JSON.stringify(value).match(structIndicator) !== null
 	}
 	const oneLevelParse = jsonObject => {
